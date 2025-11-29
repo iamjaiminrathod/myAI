@@ -1,5 +1,5 @@
 import express from 'express';
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 import cors from 'cors';
 import dotenv from 'dotenv';
 
