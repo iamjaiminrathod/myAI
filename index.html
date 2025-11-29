@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jaimin AI Chat v2.1</title>
-<!-- Noto fonts for Hindi/Gujarati -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Gujarati:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Smart AI Chat v4.5</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 body {
   margin:0;
@@ -14,109 +13,6 @@ body {
   display:flex;
   flex-direction:column;
   height:100vh;
-}
-
-/* --- FLOATING PROFESSIONAL HEADER --- */
-.top-card {
-  position: sticky;
-  top:12px;
-  margin:0 16px 12px;
-  padding:14px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-radius:24px;
-  background:#f0f3f7;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.05);
-  transition: all 0.3s ease;
-}
-
-.left-section {
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.logo-wrapper {
-  position: relative;
-  width:46px;
-  height:46px;
-}
-
-.logo-wrapper img {
-  width:100%;
-  height:100%;
-  border-radius:50%;
-  object-fit:cover;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.logo-shadow {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: radial-gradient(rgba(52,168,83,0.3), transparent 70%);
-  z-index: -1;
-}
-
-.version-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background:#34a853;
-  color:white;
-  font-size:0.7em;
-  font-weight:600;
-  padding:2px 6px;
-  border-radius:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-}
-
-.name-wrapper {
-  display:flex;
-  flex-direction:column;
-  line-height:1.1;
-}
-
-.name-wrapper .name {
-  font-weight:700;
-  font-size:1.3em;
-  color:#111;
-}
-
-.name-wrapper .subtitle {
-  font-size:0.9em;
-  color:#555;
-  margin-top:2px;
-}
-
-.right-section {
-  display:flex;
-  align-items:center;
-}
-
-.right-section a {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-left:14px;
-  transition:0.3s;
-}
-
-.right-section a:hover svg {
-  transform: scale(1.2) rotate(12deg);
-  fill:#34a853;
-  opacity:1;
-}
-
-.right-section svg {
-  width:28px;
-  height:28px;
-  fill:#111;
-  transition:0.3s;
 }
 
 /* Chat box */
@@ -129,12 +25,12 @@ body {
   gap:14px;
 }
 
-/* COMMON MESSAGE */
+/* Messages */
 .msg {
   max-width:75%;
   padding:12px 16px;
   border-radius:16px;
-  line-height:1.5;
+  line-height:1.45;
   font-size:16px;
   white-space:pre-wrap;
   word-wrap:break-word;
@@ -143,17 +39,14 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* USER MESSAGE */
 .user {
   background:#34a853;
   color:white;
   align-self:flex-end;
   border-bottom-right-radius:4px;
   box-shadow: 0 2px 12px rgba(52,168,83,0.2);
-  font-family: Inter, sans-serif;
 }
 
-/* AI MESSAGE */
 .ai {
   background:#f0f0f0;
   color:#111;
@@ -161,10 +54,9 @@ body {
   border-bottom-left-radius:4px;
   padding-top:38px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  font-weight:400;
 }
 
-/* AI logo above bubble */
+/* AI Icon */
 .ai::before {
   content:"";
   position:absolute;
@@ -179,7 +71,20 @@ body {
   box-shadow:0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* Input area - iOS modern style */
+/* Network Error */
+.network-status {
+  text-align:center;
+  color:#fff;
+  background:#e53935;
+  padding:6px 12px;
+  border-radius:12px;
+  font-size:14px;
+  display:none;
+  margin-bottom:6px;
+  align-self:center;
+}
+
+/* Input area */
 .input-area {
   display:flex;
   align-items:center;
@@ -205,21 +110,9 @@ input {
   transition: all 0.25s ease;
 }
 
-input:focus {
-  border-color:#34a853;
-  box-shadow: 0 0 14px rgba(52,168,83,0.3);
-}
+input:focus { border-color:#34a853; box-shadow: 0 0 14px rgba(52,168,83,0.3); }
+input::placeholder { color:#aaa; transition:0.3s ease; }
 
-input::placeholder {
-  color:#aaa;
-  transition:0.3s ease;
-}
-
-input:focus::placeholder {
-  opacity:0.5;
-}
-
-/* Send button with PNG icon */
 .send-btn {
   margin-left:8px;
   width:48px;
@@ -237,159 +130,118 @@ input:focus::placeholder {
   box-shadow: 0 2px 10px rgba(52,168,83,0.25);
 }
 
-.send-btn.active {
-  opacity:1;
-}
+.send-btn.active { opacity:1; }
+.send-btn:hover { transform: scale(1.1); box-shadow:0 6px 16px rgba(52,168,83,0.35); }
+.send-btn::after { content:'✈'; color:white; font-size:20px; font-weight:600; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); }
 
-.send-btn:hover {
-  transform: scale(1.1);
-  box-shadow:0 6px 16px rgba(52,168,83,0.35);
-}
+/* Animations */
+@keyframes fadeIn{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
 
-.send-btn img {
-  width:24px;
-  height:24px;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(5px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
+/* Mobile adjustments */
 @media(max-width:600px){
   .msg{max-width:90%; font-size:14px; padding:10px 12px;}
   input{font-size:14px; padding:12px 16px;}
   .ai{padding-top:32px;}
   .ai::before{width:28px; height:28px; top:-6px;}
   .send-btn{width:42px;height:42px;}
-  .send-btn img{width:20px;height:20px;}
-  .top-card{padding:12px 16px; margin:10px;}
-  .left-section img{width:40px;height:40px;}
-  .name-wrapper .name{font-size:1.1em;}
-  .right-section svg{width:24px;height:24px;}
-  .version-badge {top:-5px; right:-5px; font-size:0.65em; padding:2px 5px;}
 }
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="top-card">
-  <div class="left-section">
-    <div class="logo-wrapper">
-      <img src="https://lh3.googleusercontent.com/a/ACg8ocIKNf6ue9_PVL4PsymPymaiqwCI8WSzoYNP2GP_rZEdk3Ex-vi3=s360-c-no" alt="Logo">
-      <div class="logo-shadow"></div>
-      <div class="version-badge">v2.1</div>
-    </div>
-    <div class="name-wrapper">
-      <span class="name">Jaimin</span>
-      <span class="subtitle">AI Chat</span>
-    </div>
-  </div>
-  <div class="right-section">
-    <a href="tel:+1234567890" title="Call">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.2.48 2.5.74 3.84.74a1 1 0 011 1V20a1 1 0 01-1 1c-9.39 0-17-7.61-17-17a1 1 0 011-1h3.5a1 1 0 011 1c0 1.34.26 2.64.74 3.84a1 1 0 01-.21 1.11l-2.2 2.2z"/>
-      </svg>
-    </a>
-  </div>
-</div>
-
+<div class="network-status" id="netStatus">No Internet or Server Down!</div>
 <div id="chatBox"></div>
 
 <div class="input-area">
-  <input type="text" id="userInput" placeholder="Type a message..." oninput="toggleButton()" onkeydown="if(event.key==='Enter'){sendMessage()}">
-  <button class="send-btn" id="sendBtn">
-    <img src="https://cdn-icons-png.flaticon.com/512/60/60577.png" alt="Send">
-  </button>
+  <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+  <button class="send-btn" id="sendBtn"></button>
 </div>
 
 <script>
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
+const netStatus = document.getElementById("netStatus");
+
 let chatMemory = JSON.parse(localStorage.getItem("chatMemory")||"[]");
 
-function toggleButton(){
-  if(input.value.trim().length>0){
-    sendBtn.classList.add("active");
-  } else {
-    sendBtn.classList.remove("active");
-  }
+function toggleButton(){ 
+  sendBtn.classList.toggle("active", input.value.trim().length>0); 
 }
+input.addEventListener("input", toggleButton);
 
-function saveMemory(){localStorage.setItem("chatMemory",JSON.stringify(chatMemory));}
-
-function isHindiGujarati(text){
-  return /[\u0900-\u097F\u0A80-\u0AFF]/.test(text);
-}
-
-function smoothType(div,text,done){
+// Smooth typing
+function smoothType(div,text){
   let i=0;
   function type(){
-    if(i>=text.length){ if(done)done(); return; }
-    div.innerText += text[i];
+    if(i>=text.length) return;
+    div.innerText+=text[i];
     i++;
     chatBox.scrollTop = chatBox.scrollHeight;
-    setTimeout(type,25);
+    setTimeout(type,20);
   }
   type();
 }
 
 function addMessage(msg,type){
-  const div = document.createElement("div");
+  const div=document.createElement("div");
   div.className="msg "+type;
-  if(type==="ai" && isHindiGujarati(msg)){
-      div.style.fontFamily='"Noto Sans Devanagari","Noto Sans Gujarati","SF Pro Display",Helvetica,Arial,sans-serif';
-  } else if(type==="ai") {
-      div.style.fontFamily='Inter, sans-serif';
-  }
-  if(type==="user"){
-      div.innerText=msg;
-  } else {
-      div.innerText="";
-      smoothType(div,msg);
-  }
+  if(type==="user"){ div.innerText=msg; }
+  else{ smoothType(div,msg); }
   chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-function disableInput(b){
-  input.disabled = b;
-  sendBtn.disabled = b;
-}
+function disableInput(b){ input.disabled=b; sendBtn.disabled=b; }
 
-function sendMessage(){
+async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
+
   disableInput(true);
   addMessage(text,"user");
-  chatMemory.push({role:"user",content:text});
-  saveMemory();
-  input.value="";
-  toggleButton();
-  addMessage("AI is thinking...","ai");
-  fetch("https://myai-2-rtmk.onrender.com/generate",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({prompt:text,history:chatMemory})
-  })
-  .then(r=>r.json())
-  .then(data=>{
-    document.querySelectorAll(".ai")[document.querySelectorAll(".ai").length-1].remove();
-    const reply=data.reply || "Something went wrong.";
-    chatMemory.push({role:"ai",content:reply});
-    saveMemory();
-    addMessage(reply,"ai");
-    disableInput(false);
-  })
-  .catch(()=>{
-    document.querySelectorAll(".ai")[document.querySelectorAll(".ai").length-1].remove();
-    addMessage("⚠️ Error! Try again.","ai");
-    disableInput(false);
-  })
-}
-</script>
+  input.value=""; toggleButton();
 
+  const loading = document.createElement("div");
+  loading.className="msg ai"; 
+  loading.innerText="AI is thinking...";
+  chatBox.appendChild(loading); 
+
+  try{
+    const res = await fetch("https://myai-2-rtmk.onrender.com/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:text})
+    });
+
+    if(!res.ok) throw new Error("Server error");
+    const data = await res.json();
+
+    loading.remove();
+
+    const reply = data.reply || "Something went wrong.";
+    addMessage(reply,"ai");
+
+  } catch(e){
+    loading.remove();
+    addMessage("⚠️ AI reply failed.","ai");
+  }
+
+  disableInput(false);
+}
+
+// Enter + Button
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", e => {
+  if(e.key==='Enter'){ sendMessage(); }
+});
+
+// Ping server
+setInterval(()=>{
+  fetch("https://myai-2-rtmk.onrender.com/ping")
+    .catch(()=> netStatus.style.display="block");
+},40000);
+
+</script>
 </body>
 </html>
