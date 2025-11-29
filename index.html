@@ -5,144 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simple AI Chat</title>
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #fafafa;
-        font-family: Arial, sans-serif;
-        color: #333;
-    }
-
-    header {
-        text-align: center;
-        padding: 15px;
-        background: #f5f5f5;
-        border-bottom: 1px solid #ddd;
-    }
-
-    #chatBox {
-        width: 90%;
-        max-width: 700px;
-        margin: 20px auto;
-        padding: 15px;
-        border: 1px solid #ddd;
-        height: 400px;
-        overflow-y: auto;
-        background: #fff;
-    }
-
-    .msg {
-        padding: 10px;
-        margin-bottom: 10px;
-        border-left: 3px solid;
-        background: #f9f9f9;
-    }
-
-    .user {
-        border-color: #4285f4;
-    }
-
-    .ai {
-        border-color: #34a853;
-    }
-
-    .input-area {
-        width: 90%;
-        max-width: 700px;
-        margin: 10px auto;
-        display: flex;
-        gap: 8px;
-    }
-
-    input {
-        flex: 1;
-        padding: 12px;
-        border: 1px solid #ccc;
-        font-size: 15px;
-    }
-
-    button {
-        padding: 12px 18px;
-        border: 1px solid #666;
-        background: #eee;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background: #e0e0e0;
-    }
-
-    footer {
-        text-align: center;
-        margin-top: 25px;
-        padding: 10px;
-        font-size: 14px;
-        border-top: 1px solid #ddd;
-        background: #f5f5f5;
-    }
+body { margin:0; padding:0; font-family:Arial; background:#fafafa; color:#333; }
+header { text-align:center; padding:15px; background:#f5f5f5; border-bottom:1px solid #ddd; }
+#chatBox { width:90%; max-width:700px; margin:20px auto; padding:15px; border:1px solid #ddd; height:400px; overflow-y:auto; background:#fff; }
+.msg { padding:10px; margin-bottom:10px; border-left:3px solid; background:#f9f9f9; }
+.user { border-color:#4285f4; }
+.ai { border-color:#34a853; }
+.input-area { width:90%; max-width:700px; margin:10px auto; display:flex; gap:8px; }
+input { flex:1; padding:12px; border:1px solid #ccc; font-size:15px; }
+button { padding:12px 18px; border:1px solid #666; background:#eee; cursor:pointer; }
+button:hover { background:#e0e0e0; }
+footer { text-align:center; margin-top:25px; padding:10px; font-size:14px; border-top:1px solid #ddd; background:#f5f5f5; }
 </style>
 </head>
 <body>
-
-<header>
-    <h2>Simple AI Chat</h2>
-</header>
-
+<header><h2>Simple AI Chat</h2></header>
 <div id="chatBox"></div>
-
 <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
+<input type="text" id="userInput" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
 </div>
-
 <footer>Simple AI © 2025</footer>
-
 <script>
 const input = document.getElementById("userInput");
 const chatBox = document.getElementById("chatBox");
 
 async function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
-    addMessage(text, "user");
-    input.value = "";
+  const text = input.value.trim();
+  if(!text) return;
+  addMessage(text,"user");
+  input.value = "";
+  addMessage("AI is typing...","ai");
 
-    // Temporary AI typing message
-    addMessage("AI is typing...", "ai");
-
-    try {
-        const res = await fetch("https://myai-rhop.onrender.com/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: text })
-        });
-
-        const data = await res.json();
-
-        // Remove "AI is typing..."
-        const aiMsgs = chatBox.querySelectorAll(".ai");
-        aiMsgs[aiMsgs.length - 1].remove();
-
-        // Show real AI reply
-        const reply = data.reply; // backend should return { reply: "..." }
-        addMessage(reply, "ai");
-
-    } catch (err) {
-        console.error(err);
-        const aiMsgs = chatBox.querySelectorAll(".ai");
-        aiMsgs[aiMsgs.length - 1].remove();
-        addMessage("Error fetching AI reply.", "ai");
-    }
+  try {
+    const res = await fetch("https://<YOUR-RENDER-BACKEND-URL>/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:text})
+    });
+    const data = await res.json();
+    const aiMsgs = chatBox.querySelectorAll(".ai");
+    aiMsgs[aiMsgs.length-1].remove();
+    addMessage(data.reply,"ai");
+  } catch(err) {
+    console.error(err);
+    const aiMsgs = chatBox.querySelectorAll(".ai");
+    aiMsgs[aiMsgs.length-1].remove();
+    addMessage("Error fetching AI reply.","ai");
+  }
 }
 
-function addMessage(message, type) {
-    const div = document.createElement("div");
-    div.className = `msg ${type}`;
-    div.innerText = message;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+function addMessage(message,type){
+  const div = document.createElement("div");
+  div.className = `msg ${type}`;
+  div.innerText = message;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 </script>
-
 </body>
 </html>
