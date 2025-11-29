@@ -1,149 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple AI Chat</title>
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-
-        header {
-            text-align: center;
-            padding: 15px;
-            background: #f5f5f5;
-            border-bottom: 1px solid #ddd;
-        }
-
-        #chatBox {
-            width: 90%;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-            height: 430px;
-            overflow-y: auto;
-            background: #fafafa;
-        }
-
-        .msg {
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 6px;
-            white-space: pre-wrap;
-        }
-
-        .user {
-            border-left: 3px solid #4285f4;
-        }
-
-        .ai {
-            border-left: 3px solid #34a853;
-        }
-
-        pre {
-            background: #1e1e1e;
-            color: #fff;
-            padding: 10px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-
-        .input-area {
-            width: 90%;
-            max-width: 700px;
-            margin: 10px auto;
-            display: flex;
-            gap: 8px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-            border-radius: 6px;
-        }
-
-        button {
-            padding: 12px 18px;
-            background: #4285f4;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-
-        button:hover {
-            background: #3367d6;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatGPT Style AI Chat</title>
+<style>
+body { margin:0; padding:0; font-family: Arial,sans-serif; background:#f7f7f8; }
+header { text-align:center; padding:15px; background:#202123; color:#fff; font-size:18px; }
+#chatBox { width:90%; max-width:800px; margin:20px auto; height:500px; overflow-y:auto; background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+.msg { margin:8px 0; padding:10px; border-radius:6px; max-width:80%; word-wrap:break-word; }
+.user { background:#d1e7ff; align-self:flex-end; margin-left:auto; border-left:3px solid #0b62d9; }
+.ai { background:#f1f3f4; align-self:flex-start; border-left:3px solid #34a853; }
+.input-area { display:flex; width:90%; max-width:800px; margin:0 auto; gap:10px; }
+input { flex:1; padding:12px; font-size:15px; border-radius:5px; border:1px solid #ccc; }
+button { padding:12px 20px; border:none; background:#0b62d9; color:#fff; cursor:pointer; border-radius:5px; }
+code { background:#eaeaea; padding:3px 5px; border-radius:3px; font-family:monospace; }
+pre { background:#eaeaea; padding:10px; border-radius:5px; overflow-x:auto; font-family:monospace; }
+</style>
 </head>
 <body>
 
-<header>
-    <h2>AI Chat (ChatGPT Style)</h2>
-</header>
+<header>ChatGPT Style AI Chat</header>
 
-<div id="chatBox"></div>
+<div id="chatBox" style="display:flex; flex-direction:column;"></div>
 
 <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
+<input type="text" id="userInput" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
 </div>
 
-<footer style="text-align:center; margin-top:10px; padding:8px;">
-    Simple AI © 2025
-</footer>
-
 <script>
-const input = document.getElementById("userInput");
-const chatBox = document.getElementById("chatBox");
+const chatBox = document.getElementById('chatBox');
+const input = document.getElementById('userInput');
 
-function sendMessage() {
-    let text = input.value.trim();
-    if (text === "") return;
-
-    addMessage(text, "user");
-    input.value = "";
-
-    addMessage("AI is typing...", "ai");
-
-    fetch("https://myai-2-rtmk.onrender.com/generate", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ prompt: text })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const aiMsgs = document.querySelectorAll(".ai");
-        aiMsgs[aiMsgs.length - 1].remove();
-
-        addMessage(formatMarkdown(data.reply), "ai");
-    })
-    .catch(err => console.error(err));
-}
-
-function addMessage(message, type) {
-    let div = document.createElement("div");
-    div.className = "msg " + type;
-    div.innerHTML = message;
+function addMessage(msg,type){
+    const div = document.createElement('div');
+    div.className = 'msg '+type;
+    // Highlight code blocks
+    div.innerHTML = msg.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>');
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function formatMarkdown(text) {
-    return text
-        .replace(/```([^`]+)```/g, "<pre><code>$1</code></pre>")
-        .replace(/\n/g, "<br>");
+function sendMessage(){
+    const text = input.value.trim();
+    if(!text) return;
+    addMessage(text,'user');
+    input.value='';
+    addMessage('AI is typing...','ai');
+    
+    fetch('https://myai-2-rtmk.onrender.com/generate',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt:text})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        const ais = chatBox.querySelectorAll('.ai');
+        ais[ais.length-1].remove();
+        addMessage(data.reply,'ai');
+    })
+    .catch(err=>{
+        console.error(err);
+        const ais = chatBox.querySelectorAll('.ai');
+        ais[ais.length-1].remove();
+        addMessage('Error fetching AI reply','ai');
+    });
 }
 </script>
 
