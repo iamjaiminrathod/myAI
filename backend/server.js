@@ -1,18 +1,18 @@
-const express = require('express');
-const fetch = require('node-fetch'); 
-require('dotenv').config();
-const cors = require('cors');
+const express = require("express");
+const fetch = require("node-fetch");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* -------- PING ROUTE (for uptime) -------- */
+// PING route - used for keep-alive & health check
 app.get("/ping", (req, res) => {
-    res.send("PONG");
+    res.json({ status: "alive" });
 });
 
-/* -------- GEMINI AI ROUTE -------- */
+// GEMINI AI ROUTE
 app.post("/generate", async (req, res) => {
     const prompt = req.body.prompt;
 
@@ -23,12 +23,18 @@ app.post("/generate", async (req, res) => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
+                    contents: [
+                        {
+                            parts: [{ text: prompt }]
+                        }
+                    ]
                 })
             }
         );
 
         const data = await response.json();
+        console.log("AI Response:", data);
+
         const reply =
             data.candidates?.[0]?.content?.parts?.[0]?.text ||
             "AI reply failed";
@@ -36,24 +42,23 @@ app.post("/generate", async (req, res) => {
         res.json({ reply });
 
     } catch (err) {
-        console.error("ERROR:", err);
+        console.error(err);
         res.status(500).json({ error: err.message });
     }
 });
 
-/* -------- SELF-PING SYSTEM (Prevents Sleep) -------- */
-const RENDER_URL = process.env.RENDER_URL; // add this variable in Render
+// Default home test
+app.get("/", (req, res) => {
+    res.send("AI Backend is running...");
+});
 
+// ---------- KEEP SERVER AWAKE (SELF-PING) ----------
 setInterval(() => {
-    if (!RENDER_URL) return;
-    
-    fetch(RENDER_URL + "/ping")
-        .then(() => console.log("Self Ping: OK"))
-        .catch(() => console.log("Self Ping: Failed"));
-}, 240000); // ping every 4 minutes
+    fetch("https://myai-3-rtmk.onrender.com/ping")
+        .then(r => console.log("Self-ping OK:", r.status))
+        .catch(e => console.log("Self-ping Failed:", e.message));
+}, 1000 * 60 * 5); // every 5 minutes
+// ----------------------------------------------------
 
-/* -------- START SERVER -------- */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-    console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));
