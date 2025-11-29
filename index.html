@@ -38,7 +38,7 @@ async function sendMessage() {
   addMessage("AI is typing...","ai");
 
   try {
-    const res = await fetch("https://myai-1-w51r.onrender.com/generate",{
+    const res = await fetch("https://<YOUR-RENDER-BACKEND-URL>/generate",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({prompt:text})
