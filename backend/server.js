@@ -11,6 +11,7 @@ app.use(express.json());
 app.post('/generate', async (req, res) => {
   const prompt = req.body.prompt;
   try {
+    // OpenAI API call
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -24,11 +25,22 @@ app.post('/generate', async (req, res) => {
     });
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "No reply from AI";
+    console.log("OpenAI response:", data); // DEBUG
+
+    // Safer reply extraction
+    let reply = "No reply from AI";
+    if (data.choices && data.choices.length > 0) {
+      if (data.choices[0].message && data.choices[0].message.content) {
+        reply = data.choices[0].message.content;
+      } else if (data.choices[0].text) {
+        reply = data.choices[0].text;
+      }
+    }
+
     res.json({ reply });
 
   } catch (err) {
-    console.error(err);
+    console.error("Error in /generate:", err);
     res.status(500).json({ error: err.message });
   }
 });
