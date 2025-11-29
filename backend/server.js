@@ -19,14 +19,12 @@ app.post('/generate', async (req, res) => {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-5-mini", // या gpt-3.5-turbo
+        model: "gpt-5-mini",
         messages: [{ role: "user", content: prompt }]
       })
     });
 
     const data = await response.json();
-
-    // Simplify response for frontend
     const reply = data.choices?.[0]?.message?.content || "No reply from AI";
     res.json({ reply });
 
@@ -36,6 +34,5 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-// Flexible port for Render or local
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
