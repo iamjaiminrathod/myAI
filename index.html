@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart AI Chat v4.5</title>
+<title>Smart AI Chat v4.6</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 body {
@@ -163,26 +163,23 @@ const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const netStatus = document.getElementById("netStatus");
 
-let chatMemory = JSON.parse(localStorage.getItem("chatMemory")||"[]");
+// Toggle send button
+input.addEventListener("input",()=>{sendBtn.classList.toggle("active",input.value.trim().length>0);});
 
-function toggleButton(){ 
-  sendBtn.classList.toggle("active", input.value.trim().length>0); 
-}
-input.addEventListener("input", toggleButton);
-
-// Smooth typing
+// Smooth typing for AI
 function smoothType(div,text){
   let i=0;
   function type(){
     if(i>=text.length) return;
     div.innerText+=text[i];
     i++;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop=chatBox.scrollHeight;
     setTimeout(type,20);
   }
   type();
 }
 
+// Add message to chat
 function addMessage(msg,type){
   const div=document.createElement("div");
   div.className="msg "+type;
@@ -192,20 +189,23 @@ function addMessage(msg,type){
   chatBox.scrollTop=chatBox.scrollHeight;
 }
 
+// Disable/Enable input
 function disableInput(b){ input.disabled=b; sendBtn.disabled=b; }
 
+// Send message to server
 async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
   disableInput(true);
   addMessage(text,"user");
-  input.value=""; toggleButton();
+  input.value="";
+  sendBtn.classList.remove("active");
 
   const loading = document.createElement("div");
-  loading.className="msg ai"; 
+  loading.className="msg ai";
   loading.innerText="AI is thinking...";
-  chatBox.appendChild(loading); 
+  chatBox.appendChild(loading);
 
   try{
     const res = await fetch("https://myai-2-rtmk.onrender.com/generate",{
@@ -216,9 +216,7 @@ async function sendMessage(){
 
     if(!res.ok) throw new Error("Server error");
     const data = await res.json();
-
     loading.remove();
-
     const reply = data.reply || "Something went wrong.";
     addMessage(reply,"ai");
 
@@ -230,16 +228,15 @@ async function sendMessage(){
   disableInput(false);
 }
 
-// Enter + Button
-sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", e => {
-  if(e.key==='Enter'){ sendMessage(); }
-});
+// Enter key + send button
+sendBtn.addEventListener("click",sendMessage);
+input.addEventListener("keydown",e=>{if(e.key==='Enter') sendMessage();});
 
-// Ping server
+// Ping server to check network
 setInterval(()=>{
   fetch("https://myai-2-rtmk.onrender.com/ping")
-    .catch(()=> netStatus.style.display="block");
+    .then(()=>{ netStatus.style.display="none"; })
+    .catch(()=>{ netStatus.style.display="block"; });
 },40000);
 
 </script>
