@@ -54,7 +54,7 @@ app.get("/", (req, res) => {
 
 // ---------- KEEP SERVER AWAKE (SELF-PING) ----------
 setInterval(() => {
-    fetch("https://myai-3-rtmk.onrender.com/ping")
+    fetch("https://myai-3.onrender.com/ping")
         .then(r => console.log("Self-ping OK:", r.status))
         .catch(e => console.log("Self-ping Failed:", e.message));
 }, 1000 * 60 * 5); // every 5 minutes
