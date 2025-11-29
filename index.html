@@ -111,7 +111,7 @@ async function sendMessage() {
     addMessage("AI is typing...", "ai");
 
     try {
-        const res = await fetch("https://<YOUR-RENDER-BACKEND-URL>/generate", {
+        const res = await fetch("https://myai-rhop.onrender.com/generate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt: text })
