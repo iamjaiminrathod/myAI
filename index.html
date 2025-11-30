@@ -3,234 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Chat</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Gujarati:wght@400;500;700&display=swap" rel="stylesheet">
-
-<style>
-
-* {
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body {
-  font-family: Inter, sans-serif;
-  background:#e5e9ef;
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-  overflow:hidden;
-}
-
-#chatBox {
-  flex:1;
-  padding:16px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.msg {
-  max-width:75%;
-  padding:12px 16px;
-  border-radius:16px;
-  line-height:1.45;
-  font-size:16px;
-  white-space:pre-wrap;
-  word-wrap:break-word;
-  position:relative;
-  animation:fadeIn 0.3s ease;
-  box-shadow:0 2px 8px rgba(0,0,0,0.06);
-}
-
-.user {
-  background:#34a853;
-  color:white;
-  align-self:flex-end;
-  border-bottom-right-radius:6px;
-}
-
-.ai {
-  background:#f2f2f7;
-  color:#111;
-  align-self:flex-start;
-  border-bottom-left-radius:6px;
-  padding-top:40px;
-  font-family:"Noto Sans Devanagari","Noto Sans Gujarati","Inter",sans-serif;
-}
-
-.ai::before {
-  content:"";
-  position:absolute;
-  top:-12px;
-  left:10px;
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:url('https://lh3.googleusercontent.com/a/ACg8ocIKNf6ue9_PVL4PsymPymaiqwCI8WSzoYNP2GP_rZEdk3Ex-vi3=s360-c-no') no-repeat center/cover;
-  border:2px solid #ddd;
-  box-shadow:0 3px 8px rgba(0,0,0,0.15);
-}
-
-.input-area {
-  display:flex;
-  align-items:center;
-  padding:12px 14px;
-  background:#f4f5f7;
-  border-top:1px solid rgba(0,0,0,0.08);
-  gap:10px;
-}
-
-input {
-  flex:1;
-  padding:14px 18px;
-  border-radius:28px;
-  border:1px solid rgba(0,0,0,0.15);
-  outline:none;
-  font-size:16px;
-  background:white;
-  box-shadow:inset 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.send-btn {
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  border:none;
-  background:#34a853;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  opacity:0.5;
-  transition:.2s;
-  box-shadow:0 3px 12px rgba(52,168,83,0.25);
-  flex-shrink:0;
-}
-
-.send-btn.active { opacity:1; }
-
-.send-btn img {
-  width:22px;
-}
-
-@keyframes fadeIn {
-  from { opacity:0; transform:translateY(6px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-@media only screen and (max-width: 600px) {
-  .msg {
-    font-size:12px;
-    padding:8px 12px;
-  }
-
-  .input-area input {
-    padding:10px 14px;
-    font-size:14px;
-  }
-
-  .send-btn {
-    width:40px;
-    height:40px;
-  }
-
-  #chatBox {
-    padding:10px;
-    gap:10px;
-  }
-}
-
-</style>
+<title>iamjaiminrathod ( AI Chat )</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="backend/style.css">
 </head>
 <body>
-
-<div id="chatBox"></div>
-
-<div class="input-area">
-  <input type="text" id="userInput" placeholder="Type a message..." oninput="toggleButton()">
-  <button class="send-btn" id="sendBtn">
-    <img src="https://cdn-icons-png.flaticon.com/512/60/60577.png">
-  </button>
-</div>
-
-<script>
-
-const chatBox = document.getElementById("chatBox");
-const input = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-
-function toggleButton(){
-  sendBtn.classList.toggle("active", input.value.trim().length > 0);
-}
-
-function smoothType(div,text){
-  let i=0;
-  function type(){
-    if(i>=text.length) return;
-    div.innerText += text[i];
-    i++;
-    chatBox.scrollTop = chatBox.scrollHeight;
-    setTimeout(type,22);
-  }
-  type();
-}
-
-function addMessage(msg,type){
-  const div = document.createElement("div");
-  div.className = "msg " + type;
-
-  if(type==="user"){
-    div.innerText = msg;
-  } else {
-    smoothType(div,msg);
-  }
-
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-  return div;
-}
-
-async function sendMessage(){
-  const text = input.value.trim();
-  if(!text) return;
-
-  addMessage(text,"user");
-
-  input.value = "";
-  toggleButton();
-
-  const loading = addMessage("Jaimin is thinking..","ai");
-
-  try {
-    const res = await fetch("http://localhost:3000/api/chat", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ message:text })
-    });
-
-    const data = await res.json();
-
-    loading.remove();
-
-    addMessage(data.reply, "ai");
-
-  } catch (err) {
-    loading.remove();
-    addMessage("⚠️ Error! Try again.","ai");
-  }
-}
-
-input.addEventListener("keydown", e=>{
-  if(e.key==="Enter"){ sendMessage(); }
-});
-
-sendBtn.addEventListener("click", ()=> sendMessage());
-
-</script>
-
+    <div id="chatBox"></div>
+       <div class="input-area">
+           <input type="text" id="userInput" placeholder="Type a message..." oninput="toggleButton()">
+                <button class="send-btn" id="sendBtn">
+                   <svg width="28" height="28" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8.99992 16V6.41407L5.70696 9.70704C5.31643 10.0976 4.68342 10.0976 4.29289 
+                              9.70704C3.90237 9.31652 3.90237 8.6835 4.29289 8.29298L9.29289 3.29298L9.36907 
+                              3.22462C9.76184 2.90427 10.3408 2.92686 10.707 3.29298L15.707 8.29298L15.7753 
+                              8.36915C16.0957 8.76192 16.0731 9.34092 15.707 9.70704C15.3408 10.0732 14.7618 
+                              10.0958 14.3691 9.7754L14.2929 9.70704L10.9999 6.41407V16C10.9999 16.5523 10.5522 
+                              17 9.99992 17C9.44764 17 8.99992 16.5523 8.99992 16Z"></path>
+                        </svg>
+               </button>
+          </div>
+<script src="backend/data.js"></script>
 </body>
 </html>
