@@ -72,7 +72,7 @@ function sendMessage(){
   input.value="";
   toggleButton();
 
-  addMessage("Jaimin is thinking...","ai");
+  addMessage("Jaimin is typing...","ai");
 
   fetch("https://myai-6.onrender.com/generate",{
     method:"POST",
