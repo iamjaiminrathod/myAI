@@ -74,7 +74,7 @@ function sendMessage(){
 
   addMessage("Jaimin is thinking...","ai");
 
-  fetch("https://myai-6.onrender.com/generat",{
+  fetch("https://myai-6.onrender.com/generate",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({prompt:text,history:chatMemory})
