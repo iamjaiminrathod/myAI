@@ -7,28 +7,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Google AI Init
+// Init Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const prompt = req.body.message;
+    const userMessage = req.body.message;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: "gemini-1.5-flash-latest"  // ✅ Correct Model
     });
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent({
+      contents: [
+        { role: "user", parts: [{ text: userMessage }] }
+      ]
+    });
 
-    const reply = result.response.text(); // Correct Gemini Output
-
+    const reply = result.response.text();
     res.json({ reply });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Gemini API Failed" });
+  } catch (error) {
+    console.error("Gemini Error:", error);
+    res.status(500).json({ error: "Gemini API Failed", details: error.message });
   }
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("🚀 Server running on port", PORT);
+});
