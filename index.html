@@ -3,19 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart AI Chat v4.6</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>AI Chat</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;700&family=Noto+Sans+Gujarati:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
-body {
+
+* {
   margin:0;
-  font-family:Inter, sans-serif;
-  background:#e0e5ec;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body {
+  font-family: Inter, sans-serif;
+  background:#e5e9ef;
   display:flex;
   flex-direction:column;
   height:100vh;
+  overflow:hidden;
 }
 
-/* Chat box */
 #chatBox {
   flex:1;
   padding:16px;
@@ -25,7 +33,6 @@ body {
   gap:14px;
 }
 
-/* Messages */
 .msg {
   max-width:75%;
   padding:12px 16px;
@@ -36,85 +43,59 @@ body {
   word-wrap:break-word;
   position:relative;
   animation:fadeIn 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
 }
 
 .user {
   background:#34a853;
   color:white;
   align-self:flex-end;
-  border-bottom-right-radius:4px;
-  box-shadow: 0 2px 12px rgba(52,168,83,0.2);
+  border-bottom-right-radius:6px;
 }
 
 .ai {
-  background:#f0f0f0;
+  background:#f2f2f7;
   color:#111;
   align-self:flex-start;
-  border-bottom-left-radius:4px;
-  padding-top:38px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-bottom-left-radius:6px;
+  padding-top:40px;
+  font-family:"Noto Sans Devanagari","Noto Sans Gujarati","Inter",sans-serif;
 }
 
-/* AI Icon */
 .ai::before {
   content:"";
   position:absolute;
-  top:-10px;
+  top:-12px;
   left:10px;
-  width:32px;
-  height:32px;
+  width:34px;
+  height:34px;
   border-radius:50%;
   background:url('https://lh3.googleusercontent.com/a/ACg8ocIKNf6ue9_PVL4PsymPymaiqwCI8WSzoYNP2GP_rZEdk3Ex-vi3=s360-c-no') no-repeat center/cover;
-  background-color:#fff;
   border:2px solid #ddd;
-  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  box-shadow:0 3px 8px rgba(0,0,0,0.15);
 }
 
-/* Network Error */
-.network-status {
-  text-align:center;
-  color:#fff;
-  background:#e53935;
-  padding:6px 12px;
-  border-radius:12px;
-  font-size:14px;
-  display:none;
-  margin-bottom:6px;
-  align-self:center;
-}
-
-/* Input area */
 .input-area {
   display:flex;
   align-items:center;
-  padding:12px 16px;
-  background:#f0f3f7;
+  padding:12px 14px;
+  background:#f4f5f7;
   border-top:1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
-  position: sticky;
-  bottom:0;
-  backdrop-filter: blur(10px);
-  border-radius:24px 24px 0 0;
+  gap:10px;
 }
 
 input {
   flex:1;
-  padding:14px 20px;
+  padding:14px 18px;
   border-radius:28px;
-  border:1px solid rgba(0,0,0,0.12);
-  font-size:16px;
+  border:1px solid rgba(0,0,0,0.15);
   outline:none;
+  font-size:16px;
   background:white;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
-  transition: all 0.25s ease;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,0.08);
 }
 
-input:focus { border-color:#34a853; box-shadow: 0 0 14px rgba(52,168,83,0.3); }
-input::placeholder { color:#aaa; transition:0.3s ease; }
-
 .send-btn {
-  margin-left:8px;
   width:48px;
   height:48px;
   border-radius:50%;
@@ -124,121 +105,132 @@ input::placeholder { color:#aaa; transition:0.3s ease; }
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  transition:all 0.2s ease;
   opacity:0.5;
-  position:relative;
-  box-shadow: 0 2px 10px rgba(52,168,83,0.25);
+  transition:.2s;
+  box-shadow:0 3px 12px rgba(52,168,83,0.25);
+  flex-shrink:0;
 }
 
 .send-btn.active { opacity:1; }
-.send-btn:hover { transform: scale(1.1); box-shadow:0 6px 16px rgba(52,168,83,0.35); }
-.send-btn::after { content:'✈'; color:white; font-size:20px; font-weight:600; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); }
 
-/* Animations */
-@keyframes fadeIn{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
-
-/* Mobile adjustments */
-@media(max-width:600px){
-  .msg{max-width:90%; font-size:14px; padding:10px 12px;}
-  input{font-size:14px; padding:12px 16px;}
-  .ai{padding-top:32px;}
-  .ai::before{width:28px; height:28px; top:-6px;}
-  .send-btn{width:42px;height:42px;}
+.send-btn img {
+  width:22px;
 }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@media only screen and (max-width: 600px) {
+  .msg {
+    font-size:12px;
+    padding:8px 12px;
+  }
+
+  .input-area input {
+    padding:10px 14px;
+    font-size:14px;
+  }
+
+  .send-btn {
+    width:40px;
+    height:40px;
+  }
+
+  #chatBox {
+    padding:10px;
+    gap:10px;
+  }
+}
+
 </style>
 </head>
 <body>
 
-<div class="network-status" id="netStatus">No Internet or Server Down!</div>
 <div id="chatBox"></div>
 
 <div class="input-area">
-  <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
-  <button class="send-btn" id="sendBtn"></button>
+  <input type="text" id="userInput" placeholder="Type a message..." oninput="toggleButton()">
+  <button class="send-btn" id="sendBtn">
+    <img src="https://cdn-icons-png.flaticon.com/512/60/60577.png">
+  </button>
 </div>
 
 <script>
+
 const chatBox = document.getElementById("chatBox");
 const input = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
-const netStatus = document.getElementById("netStatus");
 
-// Toggle send button
-input.addEventListener("input",()=>{sendBtn.classList.toggle("active",input.value.trim().length>0);});
+function toggleButton(){
+  sendBtn.classList.toggle("active", input.value.trim().length > 0);
+}
 
-// Smooth typing for AI
 function smoothType(div,text){
   let i=0;
   function type(){
     if(i>=text.length) return;
-    div.innerText+=text[i];
+    div.innerText += text[i];
     i++;
-    chatBox.scrollTop=chatBox.scrollHeight;
-    setTimeout(type,20);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    setTimeout(type,22);
   }
   type();
 }
 
-// Add message to chat
 function addMessage(msg,type){
-  const div=document.createElement("div");
-  div.className="msg "+type;
-  if(type==="user"){ div.innerText=msg; }
-  else{ smoothType(div,msg); }
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+
+  if(type==="user"){
+    div.innerText = msg;
+  } else {
+    smoothType(div,msg);
+  }
+
   chatBox.appendChild(div);
-  chatBox.scrollTop=chatBox.scrollHeight;
+  chatBox.scrollTop = chatBox.scrollHeight;
+  return div;
 }
 
-// Disable/Enable input
-function disableInput(b){ input.disabled=b; sendBtn.disabled=b; }
-
-// Send message to server
 async function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
-  disableInput(true);
   addMessage(text,"user");
-  input.value="";
-  sendBtn.classList.remove("active");
 
-  const loading = document.createElement("div");
-  loading.className="msg ai";
-  loading.innerText="AI is thinking...";
-  chatBox.appendChild(loading);
+  input.value = "";
+  toggleButton();
 
-  try{
-    const res = await fetch("https://myai-2-rtmk.onrender.com/generate",{
+  const loading = addMessage("Jaimin is thinking..","ai");
+
+  try {
+    const res = await fetch("http://localhost:3000/api/chat", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({prompt:text})
+      body:JSON.stringify({ message:text })
     });
 
-    if(!res.ok) throw new Error("Server error");
     const data = await res.json();
-    loading.remove();
-    const reply = data.reply || "Something went wrong.";
-    addMessage(reply,"ai");
 
-  } catch(e){
     loading.remove();
-    addMessage("⚠️ AI reply failed.","ai");
+
+    addMessage(data.reply, "ai");
+
+  } catch (err) {
+    loading.remove();
+    addMessage("⚠️ Error! Try again.","ai");
   }
-
-  disableInput(false);
 }
 
-// Enter key + send button
-sendBtn.addEventListener("click",sendMessage);
-input.addEventListener("keydown",e=>{if(e.key==='Enter') sendMessage();});
+input.addEventListener("keydown", e=>{
+  if(e.key==="Enter"){ sendMessage(); }
+});
 
-// Ping server to check network
-setInterval(()=>{
-  fetch("https://myai-2-rtmk.onrender.com/ping")
-    .then(()=>{ netStatus.style.display="none"; })
-    .catch(()=>{ netStatus.style.display="block"; });
-},40000);
+sendBtn.addEventListener("click", ()=> sendMessage());
 
 </script>
+
 </body>
 </html>
